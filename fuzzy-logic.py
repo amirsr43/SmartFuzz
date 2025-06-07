@@ -4,6 +4,8 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+import os
+from dotenv import load_dotenv
 
 # === MQTT CONFIG ===
 BROKER = "192.168.244.254"
@@ -13,6 +15,8 @@ TOPIC_CONTROL = "jemuran/control"
 
 # Simpan data dari ESP32
 latest_data = {"suhu": "-", "ldr": "-", "jam": "-"}
+
+load_dotenv()
 
 # === MQTT Callback ===
 def on_connect(client, userdata, flags, rc):
@@ -106,7 +110,13 @@ def start(update: Update, context: CallbackContext):
 
 # === Setup Telegram Bot ===
 def main():
-    updater = Updater("7977346644:AAFuNX7T8RAkR1Um-2YCAxWJ1tNzi_N-vPs", use_context=True)
+    TOKEN = os.getenv("TELEGRAM_TOKEN")  # Ambil token dari env
+
+    if not TOKEN:
+        print("❌ TOKEN tidak ditemukan. Pastikan .env sudah benar.")
+        return
+
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))

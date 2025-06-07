@@ -3,6 +3,10 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ==== DATA DUMMY UNTUK TEST ====
 latest_data = {"suhu": "30", "ldr": "700", "jam": "12"}  # data dummy buat test
@@ -78,7 +82,13 @@ def start(update: Update, context: CallbackContext):
 # === Setup Telegram Bot ===
 def main():
     # Ganti token kamu di sini
-    updater = Updater("7977346644:AAFuNX7T8RAkR1Um-2YCAxWJ1tNzi_N-vPs", use_context=True)
+    TOKEN = os.getenv("TELEGRAM_TOKEN")  # Ambil token dari env
+
+    if not TOKEN:
+        print("❌ TOKEN tidak ditemukan. Pastikan .env sudah benar.")
+        return
+
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
